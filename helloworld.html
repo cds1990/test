@@ -7,9 +7,16 @@
     <body> 
         <p>Hello World 1</p>
         <p>Hello World 2</p>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
         <script>  
         d3.select("body").selectAll("p");      
+        var p = d3.select("body")
+              .selectAll("p")
+              .text("www.ourd3js.com");
+        p.style("color","red")
+         .style("font-size","72px");
         </script> 
+
     </body> 
 </html>
 
