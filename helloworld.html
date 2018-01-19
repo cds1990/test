@@ -16,8 +16,8 @@
             .append("svg")
             .attr("width", w)
             .attr("height", h);
-        var dataset = [ 2.5 , 2.1 , 2 , 1 , 0.5 ];
-        var linear = d3.scale.linear()
+        var dataset = [ 2.5 , 2.1 , 2 , 1 , 4 ];
+        var linear = d3.scaleLinear()
                         .domain([0, d3.max(dataset)])
                         .range([0, 250]);
         var rh = 25;
