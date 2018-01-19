@@ -20,7 +20,7 @@
         var linear = d3.scaleLinear()
                         .domain([0, d3.max(dataset)])
                         .range([0, 250]);
-        var axis = d3.svg.axis()
+        var axis = d3.axisBottom()
                     .scale(linear)
                     .orient("bottom")
                     .ticks(7);
