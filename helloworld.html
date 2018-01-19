@@ -33,8 +33,22 @@
             .attr("width",function(d){return linear(d);})
             .attr("height",rh-2)
             .attr("fill","steelblue");
-            .append("g")
-            .call(axis);
+        <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+        </style>
+        svg.append("g")
+          .attr("class","axis")
+          .attr("transform","translate(20,130)")
+          .call(axis);
         </script> 
 
     </body> 
