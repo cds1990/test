@@ -3,7 +3,19 @@
   <head>    <! label on the tab>
         <meta charset="utf-8"> 
         <title>Hello測試</title> 
-  </head> 
+  </head>
+  <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
     <body> 
         <p>Hello World 1</p>
         <p>Hello World 2</p>
@@ -33,18 +45,7 @@
             .attr("width",function(d){return linear(d);})
             .attr("height",rh-2)
             .attr("fill","steelblue");
-        <style>
-        .axis path,
-        .axis line{
-            fill: none;
-            stroke: black;
-            shape-rendering: crispEdges;
-        }
-        .axis text {
-            font-family: sans-serif;
-            font-size: 11px;
-        }
-        </style>
+        
         svg.append("g")
           .attr("class","axis")
           .attr("transform","translate(20,130)")
