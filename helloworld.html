@@ -19,7 +19,7 @@
         var dataset = [ 2.5 , 2.1 , 1.7 , 1.3 , 0.9 ];
         var linear = d3.scale.linear()
                         .domain([0, d3.max(dataset)])
-                        .range([0, 250])
+                        .range([0, 250]);
         var rh = 25;
         svg.selectAll("rect")
             .data(dataset)
