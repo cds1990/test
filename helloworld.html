@@ -15,46 +15,246 @@
             font-family: sans-serif;
             font-size: 11px;
         }
-    </style>
-    <h2> test 123 </h2>
-    <p>hohoho</p>
-    <body> 
-        <p>Hello 123</p>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script>  
-        d3.select("body").selectAll("p");      
-        var w = 300;
-        var h = 300;
-        var svg = d3.select("body")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
-        var padding = {left:30, right:30, top:20, bottom:20};
-        var dataset = [ 2.5 , 2.1 , 2 , 1 , 4 ];
-        var linear = d3.scaleLinear()
-                        .domain([0, d3.max(dataset)])
-                        .range([0, 250]);
-        var axis = d3.axisBottom()
-                    .scale(linear)
-                    .ticks(7);
-        var rh = 25;
-        svg.selectAll("rect")
-            .data(dataset)
-            .enter()
-            .append("rect")
-            .attr("x",20)
-            .attr("y",function(d,i){return i*rh;})
-            .attr("width",function(d){return linear(d);})
-            .attr("height",rh-2)
-            .attr("fill","steelblue");
-        
-        svg.append("g")
+  </style>
+  <h2> test 123 </h2>
+  <p>Click on user to see one's interest change over time.</p>
+  <div id="chart" style="margin:0px"></div>
+  <span id="min-time">1800</span> 
+  <input type="range" name="points" min="0" max="90" step="1" value="0" id="slider-time" style="width:100px">
+  <span id="max-time">2009</span>
+  <br>
+  
+  <body> 
+  <script>
+    // Dimensions of data to visualize.
+    function x(d) { return d.cumtime; }
+    function y(d) { return d.weight; }
+    function key(d) { return d.name; }
+    // Chart dimensions.
+    var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
+        width = 960 - margin.right,
+        height = 500 - margin.top - margin.bottom;
+    // Various scales. These domains make assumptions of data, naturally.
+    var xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
+        yScale = d3.scaleLog().domain([0, 1]).range([height, 0]);
+    // The x & y axes.
+    var xAxis = d3.axisBottom().scale(xScale).ticks(12, d3.format(",d")),
+        yAxis = d3.axisLeft().scale(yScale);
+    // Create the SVG container and set the origin.
+    var svg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "gRoot")
+    // Add the x-axis.
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+    // Add the y-axis.
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+    // Add an x-axis label.
+    svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y", height - 6)
+        .text("cumulative time (days)");
+    // Add a y-axis label.
+    svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("weight");
+    // Add the day label; the value is set on transition.
+    var label = svg.append("text")
+        .attr("class", "day label")
+        .attr("text-anchor", "end")
+        .attr("y", height - 24)
+        .attr("x", width)
+        .text(1800);
+    // Add the keyword label; the value is set on transition.
+    var keywordlabel = svg.append("text")
+        .attr("class", "keyword label")
+        .attr("text-anchor", "start")
+        .attr("y", 80)
+        .attr("x", 20)
+        .text(" ");
+    var first_time = true;
+    // Load the data.
+    d3.csv("../data/keywords.csv", function(keywords) {
+      // A bisector since many nation's data is sparsely-defined.
+      var bisect = d3.bisector(function(d) { return d[0]; });
+      // Add a dot per keyword. Initialize the data at 1800, and set the colors.
+      var dot = svg.append("g")
+          .attr("class", "dots")
+        .selectAll(".dot")
+          .data(interpolateData(1800))
+        .enter().append("circle")
+          .attr("class", "dot")
+          .style("fill", "steelblue")
+          .call(position)
+          .on("mousedown", function(d, i) {
+          })
+          .on("mouseup", function(d, i) {
+            dot.classed("selected", false);
+            d3.select(this).classed("selected", !d3.select(this).classed("selected"));
+            dragit.trajectory.display(d, i, "selected");
+          })
+          .on("mouseenter", function(d, i) {
+            clear_demo();
+            if(dragit.statemachine.current_state == "idle") {
+              dragit.trajectory.display(d, i)
+              dragit.utils.animateTrajectory(dragit.trajectory.display(d, i), dragit.time.current, 1000)
+              keywordlabel.text(d.name);
+              dot.style("opacity", .4)
+              d3.select(this).style("opacity", 1)
+              d3.selectAll(".selected").style("opacity", 1)
+            }
+          })
+          .on("mouseleave", function(d, i) {
+            if(dragit.statemachine.current_state == "idle") {
+              countrylabel.text("");
+              dot.style("opacity", 1);
+            }
+      
+            dragit.trajectory.remove(d, i);
+          })
+          .call(dragit.object.activate)
+      // Add a title.
+      dot.append("title")
+          .text(function(d) { return d.name; });
+      // Start a transition that interpolates the data based on day.
+      svg.transition()
+          .duration(30000)
+          .ease("linear")
+      // Positions the dots based on data.
+      function position(dot) {
+        dot.attr("cx", function(d) { return xScale(x(d)); })
+           .attr("cy", function(d) { return yScale(y(d)); })
+           .attr("r", function(d) { return .5; });
+      }
+      // Defines a sort order so that the smallest dots are drawn on top.
+      function order(a, b) {
+        return radius(b) - radius(a);
+      }
+      // Updates the display to show the specified day.
+      function displayDay(day) {
+        dot.data(interpolateData(day+dragit.time.min), key).call(position).sort(order);
+        label.text(dragit.time.min + Math.round(day));
+      }
+      // Interpolates the dataset for the given (fractional) day.
+      function interpolateData(day) {
+        return keywords.map(function(d) {
+          return {
+            name: d.name,
+            cumtime: interpolateValues(d.cumtime, day),
+            weight: interpolateValues(d.weight, day)
+          };
+        });
+      }
+      // Finds (and possibly interpolates) the value for the specified day.
+      function interpolateValues(values, day) {
+        var i = bisect.left(values, day, 0, values.length - 1),
+            a = values[i];
+        if (i > 0) {
+          var b = values[i - 1],
+              t = (day - a[0]) / (b[0] - a[0]);
+          return a[1] * (1 - t) + b[1] * t;
+        }
+        return a[1];
+      }
+      
+      init();
+      function update(v, duration) {
+        dragit.time.current = v || dragit.time.current;
+        displayDay(dragit.time.current)
+        d3.select("#slider-time").property("value", dragit.time.current);
+      }
+      function init() {
+        dragit.init(".gRoot");
+        dragit.time = {min:1800, max:2009, step:1, current:1800}
+        dragit.data = d3.range(keywords.length).map(function() { return Array(); })
+        for(var yy = 1800; yy<2009; yy++) {
+          interpolateData(yy).filter(function(d, i) { 
+            dragit.data[i][yy-dragit.time.min] = [xScale(x(d)), yScale(y(d))];
+          })
+        }
+        dragit.evt.register("update", update);
+        //d3.select("#slider-time").property("value", dragit.time.current);
+        d3.select("#slider-time")
+          .on("mousemove", function() { 
+            update(parseInt(this.value), 500);
+            clear_demo();
+          })
+        var end_effect = function() {
+          keywordlabel.text("");
+          dot.style("opacity", 1)
+        }
+        dragit.evt.register("dragend", end_effect)
+      }
+    function clear_demo() {
+      if(first_time) {
+         svg.transition().duration(0);
+        first_time = false;
+        window.clearInterval(demo_interval);
+        keywordlabel.text("");
+        dragit.trajectory.removeAll();
+        d3.selectAll(".dot").style("opacity", 1)
+      }
+    }
+    });
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-57485706-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+      <p>Hello 123</p>
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script>  
+      d3.select("body").selectAll("p");      
+      var w = 300;
+      var h = 300;
+      var svg = d3.select("body")
+          .append("svg")
+          .attr("width", w)
+          .attr("height", h);
+      var padding = {left:30, right:30, top:20, bottom:20};
+      var dataset = [ 2.5 , 2.1 , 2 , 1 , 4 ];
+      var linear = d3.scaleLinear()
+                      .domain([0, d3.max(dataset)])
+                      .range([0, 250]);
+      var axis = d3.axisBottom()
+                  .scale(linear)
+                  .ticks(7);
+      var rh = 25;
+      svg.selectAll("rect")
+          .data(dataset)
+          .enter()
+          .append("rect")
+          .attr("x",20)
+          .attr("y",function(d,i){return i*rh;})
+          .attr("width",function(d){return linear(d);})
+          .attr("height",rh-2)
+          .attr("fill","steelblue");
+          
+      svg.append("g")
           .attr("class","axis")
           .attr("transform","translate(20,130)")
           .call(axis);
-        </script> 
+     </script> 
 
-    </body> 
+  </body> 
 </html>
 
 
