@@ -55,7 +55,7 @@
   vars.svgLine = d3.line()
                       .x(vars.accessor_x)
                       .y(vars.accessor_y)
-                      .interpolate(dragit.custom.line[vars.custom_trajectory].interpolate);
+                      .curve(dragit.custom.line[vars.custom_trajectory].interpolate);
 
 dragit.evt.register = function(evt, f, d) {
 
