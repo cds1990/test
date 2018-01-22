@@ -37,7 +37,8 @@
         .dot {
           stroke: #000;
         }
-        .axis path, .axis line {
+        .axis path, 
+        .axis line {
           fill: none;
           stroke: #000;
           shape-rendering: crispEdges;
@@ -145,7 +146,7 @@
         .text(" ");
     var first_time = true;
     // Load the data.
-    d3.csv("../data/keywords.json", function(keywords) {
+    d3.csv("data/keywords.json", function(keywords) {
       // A bisector since many nation's data is sparsely-defined.
       var bisect = d3.bisector(function(d) { return d[0]; });
       // Add a dot per keyword. Initialize the data at 1800, and set the colors.
