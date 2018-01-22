@@ -52,7 +52,7 @@
 
   dragit.playback = {playing: false, loop: false, interpolation: "none", speed: 1000};
 
-  vars.svgLine = d3.svg.line()
+  vars.svgLine = d3.line()
                       .x(vars.accessor_x)
                       .y(vars.accessor_y)
                       .interpolate(dragit.custom.line[vars.custom_trajectory].interpolate);
