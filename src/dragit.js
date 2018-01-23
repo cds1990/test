@@ -186,7 +186,7 @@ dragit.object.activate = function(d, i) {
       dragit.statemachine.setState("mouseleave");
   }, false)
 
-  d.call(d3.behavior.drag()
+  d.call(d3.drag()
     .on("dragstart", function(d, i) {
 
       d3.event.sourceEvent.stopPropagation();
