@@ -145,9 +145,7 @@
         .text(" ");
     var first_time = true;
     // Load the data.
-    d3.json("data/keywords.json", function(error, keywords) {
-      if (error) throw error;
-
+    d3.json("data/keywords.json", function(keywords) {
       // A bisector since many nation's data is sparsely-defined.
       var bisect = d3.bisector(function(d) { return d[0]; });
       // Add a dot per keyword. Initialize the data at 1800, and set the colors.
@@ -278,7 +276,7 @@
       ga('create', 'UA-57485706-1', 'auto');
       ga('send', 'pageview');
     </script>
-<br>
+    <br>
       <i>Hello 123</i></p>
 
   </body> 
