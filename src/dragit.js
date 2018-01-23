@@ -187,12 +187,12 @@ dragit.object.activate = function(d, i) {
   }, false)
 
   d.call(d3.drag()
-    .on("dragstart", function(d, i) {
+    .on("start", function(d, i) {
 
       d3.event.sourceEvent.stopPropagation();
-      dragit.statemachine.setState("dragstart");
+      dragit.statemachine.setState("start");
 
-      if (vars.dev) console.log("[dragstart]", d, i)
+      if (vars.dev) console.log("[start]", d, i)
 
       dragit.trajectory.index_closest_trajectorypoint = -1;
       dragit.trajectory.index_closest_datapoint = -1;
@@ -229,7 +229,7 @@ dragit.object.activate = function(d, i) {
                                       .attr("cx", mousepoint[0])
                                       .attr("cy", mousepoint[1]);
 
-      dragit.evt.call("dragstart");
+      dragit.evt.call("start");
 
     })
     .on("drag", function(d,i) {
