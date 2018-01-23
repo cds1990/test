@@ -363,12 +363,12 @@ dragit.object.activate = function(d, i) {
       dragit.evt.call("drag");
 
     })
-    .on("dragend", function(d,i) {
+    .on("end", function(d,i) {
 
       d3.event.sourceEvent.stopPropagation();
-      dragit.statemachine.setState("dragend");
+      dragit.statemachine.setState("end");
 
-      if (vars.dev) console.log("[dragend]", d, i)
+      if (vars.dev) console.log("[end]", d, i)
 
       switch(dragit.mouse.dragging) {
 
@@ -393,7 +393,7 @@ dragit.object.activate = function(d, i) {
       // Remove the current focus trajectory
       d3.selectAll(".gDragit.focus").remove();
 
-      dragit.evt.call("dragend");
+      dragit.evt.call("end");
 
       dragit.statemachine.setState("idle");
     })
