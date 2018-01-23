@@ -175,7 +175,7 @@ dragit.object.activate = function(d, i) {
   if (vars.dev) console.log("[activate]", d, i)
 
 
-  d3.select(this)[0].nodes().addEventListener("mouseenter", function() {
+  d3.select(this).node().addEventListener("mouseenter", function() {
     if(dragit.statemachine.current_state == "idle") {
       dragit.statemachine.setState("mouseenter");
     }
