@@ -191,7 +191,7 @@
       // Start a transition that interpolates the data based on day.
       svg.transition()
           .duration(30000)
-          .ease("linear")
+          .ease(d3.easeLinear)
       // Positions the dots based on data.
       function position(dot) {
         dot.attr("cx", function(d) { return xScale(x(d)); })

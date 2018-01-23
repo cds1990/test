@@ -614,7 +614,7 @@ dragit.object.activate = function(d, i) {
         .attr("stroke-dashoffset", totalLength)
       .transition()
         .duration(duration)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0)
   }
 
