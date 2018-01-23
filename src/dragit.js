@@ -181,7 +181,7 @@ dragit.object.activate = function(d, i) {
     }
   }, false)
 
-  d3.select(this)[0][0].node().addEventListener("mouseleave", function() {
+  d3.select(this).node().addEventListener("mouseleave", function() {
     if(dragit.statemachine.current_state == "idle")
       dragit.statemachine.setState("mouseleave");
   }, false)
